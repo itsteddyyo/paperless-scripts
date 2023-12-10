@@ -37,7 +37,7 @@ fi
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-mode=Duplex removeempty=false type=auto
+mode=Duplex emptyThreshold=0 type=auto
 # now enjoy the options in order and nicely split until we see --
 while true; do
     case "$1" in
@@ -54,7 +54,7 @@ while true; do
             shift
             ;;
         -r|--remove-empty)
-            removeempty="true"
+            emptyThreshold=1
             shift
             ;;
         -t|--type)
@@ -89,26 +89,4 @@ cleanup() {
 
 trap 'cleanup; exit 1' EXIT
 
-scanimage --format=png --resolution 600 --batch=/tmp/scan2paperless_$$_%d.png --swdeskew=yes --batch-start=10 --source="ADF ${mode})" -x 210 -y 297
-
-if $removeempty
-then
-  threshold=99
-  images=( )
-  values=( )
-  for f in /tmp/scan2paperless_$$_*.png
-  do
-    images[${#images[@]}]=$f
-    values[${#values[@]}]=$(convert $f -fuzz 02% -fill black +opaque white -fill white -opaque white -format "%[fx:100*mean]" info:)
-  done
-
-  for ((i=0;i<${#images[@]};i++))
-  do
-    if [[ $(echo "${values[i]} > $threshold" | bc -l) == "1" ]]
-    then
-      # bc will output 1 if the comparison is true, 0 otherwise
-      echo image ${images[i]} was found to be mostly white, removing.
-      rm ${images[i]}
-    fi
-  done
-fi
+scanimage --format=png --resolution 600 --batch=/tmp/scan2paperless_$$_%d.png --mode=Color --swdeskew=yes --swskip=${emptyThreshold} --batch-start=10 --source="ADF ${mode})" -x 210 -y 297
