@@ -79,7 +79,7 @@ done
 
 cleanup() {
   echo finalizing pdf file.
-  img2pdf --pdfa --output /tmp/scan2paperless_${type}_$$.pdf /tmp/scan2paperless_$$_*.png && \
+  img2pdf --pdfa -rotate=180 --output /tmp/scan2paperless_${type}_$$.pdf /tmp/scan2paperless_$$_*.png && \
   rm -f /tmp/scan2paperless_$$_*.png
 
   post2paperless /tmp/scan2paperless_${type}_$$.pdf \
@@ -89,4 +89,4 @@ cleanup() {
 
 trap 'cleanup; exit 1' EXIT
 
-scanimage --format=png --resolution 600 --batch=/tmp/scan2paperless_$$_%d.png --mode=Color --swdeskew=yes --swskip=${emptyThreshold} --batch-start=10 --source="ADF ${mode})" -x 210 -y 297
+scanimage --format=png --resolution 600 --batch=/tmp/scan2paperless_$$_%d.png --mode=Gray --swdeskew=yes --swskip=${emptyThreshold} --batch-start=10 --source="ADF ${mode})" -x 210 -y 297
