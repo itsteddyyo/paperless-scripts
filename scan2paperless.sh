@@ -79,7 +79,7 @@ done
 
 cleanup() {
   echo finalizing pdf file.
-  img2pdf --pdfa -rotate=180 --output /tmp/scan2paperless_${type}_$$.pdf /tmp/scan2paperless_$$_*.png && \
+  img2pdf --pdfa --rotation=180 --output /tmp/scan2paperless_${type}_$$.pdf /tmp/scan2paperless_$$_*.png && \
   rm -f /tmp/scan2paperless_$$_*.png
 
   post2paperless /tmp/scan2paperless_${type}_$$.pdf \
