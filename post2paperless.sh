@@ -5,7 +5,13 @@ auth_token=$auth_token
 postdoc() {
   while [[ $# -gt 0 ]]; do
     data="@${1}"
-    retval=$(curl --retry 99 --retry-all-errors --http1.1 -f -X POST -H "Authorization: Token $auth_token" --form "document=$data" -sS https://$hostname/api/documents/post_document/ || exit 1)
+    regex='.*\.(.*)\.pdf'
+    if [[ $data =~ $regex ]]; then
+      typeFormData="document_type=${BASH_REMATCH[1]}"
+    else
+      typeFormData=""
+    fi
+    retval=$(curl --retry 99 --retry-all-errors --http1.1 -f -X POST -H "Authorization: Token $auth_token" --form "${typeFormData}" --form "document=$data" -sS https://$hostname/api/documents/post_document/ || exit 1)
     if [[ $? -gt 0 ]]; then
       echo "curl failed, see error message above."
       exit 1

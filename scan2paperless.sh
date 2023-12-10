@@ -5,7 +5,7 @@ auth_token=$auth_token
 
 retval=$(curl --retry 99 --retry-all-errors --http1.1 -f -X GET -H "Authorization: Token $auth_token" -sS https://$hostname/api/document_types/ || exit 1)
 availableTypes=$(jq ".results|map(.slug)"<<<${retval})
-
+availableIds=$(jq ".results|map(.id)"<<<${retval})
 
 # More safety, by turning some bugs into errors.
 # Without `errexit` you don’t need ! and can replace
@@ -37,7 +37,7 @@ fi
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-mode=Duplex emptyThreshold=0 type=auto
+mode=Duplex emptyThreshold=0 typeExtension=""
 # now enjoy the options in order and nicely split until we see --
 while true; do
     case "$1" in
@@ -58,8 +58,14 @@ while true; do
             shift
             ;;
         -t|--type)
-            if [[ $2 == "auto" || $(echo ${availableTypes[@]} | fgrep -w $2) ]]; then
-              type="$2"
+            typeIndex=0
+            for i in "${!availableTypes[@]}"; do
+              if [[ "${availableTypes[$i]}" = "${2}" ]]; then
+                typeIndex=$i;
+              fi
+            done
+            if [[ $2 == "auto" || $typeIndex -gt 0 ]]; then
+              typeExtension="${availableIds[$typeIndex]}."
               shift 2
             else
               echo "Type '${2}' not 'auto' or in available types '${availableTypes}'"
@@ -79,12 +85,12 @@ done
 
 cleanup() {
   echo finalizing pdf file.
-  img2pdf --pdfa --rotation=180 --output /tmp/scan2paperless_${type}_$$.pdf /tmp/scan2paperless_$$_*.png && \
+  img2pdf --pdfa --rotation=180 --output /tmp/scan2paperless_$$.${typeExtension}pdf /tmp/scan2paperless_$$_*.png && \
   rm -f /tmp/scan2paperless_$$_*.png
 
-  post2paperless /tmp/scan2paperless_${type}_$$.pdf \
+  post2paperless /tmp/scan2paperless_$$.${typeExtension}pdf \
     && rm -f /tmp/scan2paperless_$$* \
-    || echo upload failed, retaining file /tmp/scan2paperless_${type}_$$.pdf >&2
+    || echo upload failed, retaining file /tmp/scan2paperless_$$.${typeExtension}pdf >&2
 }
 
 trap 'cleanup; exit 1' EXIT
