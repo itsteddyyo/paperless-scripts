@@ -8,7 +8,7 @@
 5. ```pip3 install --no-deps img2pdf```
 6. ```sudo ln /usr/share/color/icc/colord/sRGB.icc /usr/share/color/icc/sRGB.icc```
 7. ```git clone https://github.com/itsteddyyo/paperless-scripts.git```
-8. ```chmod 755 paperless-script/* && mv paperless-scripts/*. /usr/local/bin```
+8. ```chmod 755 paperless-scripts/* && sudo cp paperless-scripts/scan2paperless.sh /usr/local/bin/scan2paperless && sudo cp paperless-scripts/post2paperless.sh /usr/local/bin/post2paperless```
 9. Add to ~/.bashrc
     ```
     export hostname=XXX
