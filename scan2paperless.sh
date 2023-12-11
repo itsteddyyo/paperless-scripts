@@ -4,8 +4,10 @@ hostname=$hostname
 auth_token=$auth_token
 
 retval=$(curl --retry 99 --retry-all-errors --http1.1 -f -X GET -H "Authorization: Token $auth_token" -sS https://$hostname/api/document_types/ || exit 1)
-availableTypes=$(jq ".results|map(.slug)"<<<${retval})
-availableIds=$(jq ".results|map(.id)"<<<${retval})
+jqAvailableTypes=$(jq ".results|map(.slug)" <<< ${retval})
+jqAvailableIds=$(jq ".results|map(.id)" <<< ${retval})
+availableTypes=($(echo $jqAvailableTypes | sed -e 's/\[ //g' -e 's/\ ]//g' -e 's/\,//g'))
+availableIds=($(echo $jqAvailableIds | sed -e 's/\[ //g' -e 's/\ ]//g' -e 's/\,//g'))
 
 # More safety, by turning some bugs into errors.
 # Without `errexit` you don’t need ! and can replace
@@ -58,17 +60,19 @@ while true; do
             shift
             ;;
         -t|--type)
-            typeIndex=0
+            typeIndex=-1
             for i in "${!availableTypes[@]}"; do
-              if [[ "${availableTypes[$i]}" = "${2}" ]]; then
+              if [[ "${availableTypes[$i]}" = '"'"$2"'"' ]]; then
                 typeIndex=$i;
               fi
             done
-            if [[ $2 == "auto" || $typeIndex -gt 0 ]]; then
+            if [[ $2 == "auto" || $typeIndex -gt -1 ]]; then
               typeExtension="${availableIds[$typeIndex]}."
+              echo $typeExtension
               shift 2
             else
-              echo "Type '${2}' not 'auto' or in available types '${availableTypes}'"
+              printf -v joined '%s,' "${availableTypes[@]}"
+              echo "Type '${2}' not 'auto' or in available types ${joined%,}"
               exit 1 
             fi
             ;;
