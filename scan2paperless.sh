@@ -39,7 +39,8 @@ fi
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-mode=Duplex identifier="$$_$(date +%s)" emptyThreshold=1 typeExtension=""
+normalIdentifier="$$_$(date +%s)"
+mode=Duplex identifier=$normalIdentifier emptyThreshold=1 typeExtension=""
 # now enjoy the options in order and nicely split until we see --
 while true; do
   case "$1" in
@@ -92,7 +93,7 @@ done
 
 cleanup() {
   echo cleanup
-  if [[ $identifier = $$ ]]; then
+  if [[ $identifier = $normalIdentifier ]]; then
     echo creating pdf
     img2pdf --pdfa --rotation=180 /tmp/s2p_retain_*.png /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
 
