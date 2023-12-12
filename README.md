@@ -14,4 +14,4 @@
     export hostname=XXX
     export auth_token=XXX
     ```
-10. ```scan2paperless -dr --type=auto```
+10. ```scan2paperless -d --type=auto```
