@@ -39,7 +39,7 @@ fi
 # read getopt’s output this way to handle the quoting right:
 eval set -- "$PARSED"
 
-mode=Duplex identifier=$$ emptyThreshold=1 typeExtension=""
+mode=Duplex identifier="$$_$(date +%s)" emptyThreshold=1 typeExtension=""
 # now enjoy the options in order and nicely split until we see --
 while true; do
   case "$1" in
@@ -56,7 +56,7 @@ while true; do
     shift
     ;;
   -r | --retain)
-    identifier="retain$(date +%s)"
+    identifier="retain_$(date +%s)"
     shift
     ;;
   -k | --keep-empty)
@@ -92,10 +92,9 @@ done
 
 cleanup() {
   echo cleanup
-  if [[ $identifier -eq $$ ]]; then
+  if [[ $identifier = $$ ]]; then
     echo creating pdf
-    img2pdf --pdfa --rotation=180 /tmp/s2p_retain*.png /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf &&
-      rm -f /tmp/s2p_${identifier}_*.png
+    img2pdf --pdfa --rotation=180 /tmp/s2p_retain_*.png /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
 
     echo starting upload
     post2paperless /tmp/s2p_${identifier}.${typeExtension}pdf &&
