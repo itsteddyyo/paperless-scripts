@@ -92,15 +92,26 @@ while true; do
 done
 
 cleanup() {
+  code=$?
   echo cleanup
   if [[ $identifier = $normalIdentifier ]]; then
-    echo creating pdf
-    img2pdf --pdfa --rotation=180 /tmp/s2p_retain_*.png /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
+    if [[ code -eq 0 || code -eq 5 ]]; then
+      echo creating pdf
+      if compgen -G "/tmp/s2p_retain_*.png" >/dev/null; then
+        img2pdf --pdfa --rotation=180 /tmp/s2p_retain_*.png /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
+      else
+        img2pdf --pdfa --rotation=180 /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
+      fi
 
-    echo starting upload
-    post2paperless /tmp/s2p_${identifier}.${typeExtension}pdf &&
-      rm -f /tmp/s2p_* ||
-      echo upload failed, retaining file /tmp/s2p_${identifier}.${typeExtension}pdf >&2
+      echo starting upload
+      post2paperless /tmp/s2p_${identifier}.${typeExtension}pdf &&
+        rm -f /tmp/s2p_* ||
+        echo upload failed, retaining file /tmp/s2p_${identifier}.${typeExtension}pdf >&2
+    else
+      echo something went wrong, archiving images
+      mkdir /tmp/$$
+      mv /tmp/s2p_*.png /tmp/$$/
+    fi
   else
     echo retaining images for prepending to next document
   fi
