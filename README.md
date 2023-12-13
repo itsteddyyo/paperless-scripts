@@ -1,5 +1,7 @@
 # paperless-scripts
 
+If Companion is needed install at start! ```curl https://raw.githubusercontent.com/bitfocus/companion-pi/main/install.sh | bash```
+
 ## Steps
 1. Install Raspberry PI OS 32-bit Full
 2. ```sudo apt update && sudo apt upgrade```
