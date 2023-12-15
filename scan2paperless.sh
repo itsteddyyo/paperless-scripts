@@ -110,7 +110,7 @@ cleanup() {
     else
       echo something went wrong, archiving images
       mkdir /tmp/$$
-      mv /tmp/s2p_*.png /tmp/$$/
+      mv /tmp/s2p_*.png ~/$$/
     fi
   else
     echo retaining images for prepending to next document
