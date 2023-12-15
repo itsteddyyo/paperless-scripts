@@ -8,6 +8,7 @@
 # Short-Description: watch dir and start scan on file creation
 # Description:       watch /tmp/companion dir and when a file is created with the name of a paperless type it start the scan2paperless script parameterized
 ### END INIT INFO
+mkdir /tmp/companion
 inotifywait -q -m -e create /tmp/companion | while read DIRECTORY EVENT FILE; do
 if [[ ${FILE} = "auto" ]]; then
     scan2paperless
