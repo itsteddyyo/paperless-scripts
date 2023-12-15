@@ -12,7 +12,7 @@
 9. ```cd paperless-scripts```
 10. ```chmod 755 * && sudo cp scan2paperless.sh /usr/local/bin/scan2paperless && sudo cp post2paperless.sh /usr/local/bin/post2paperless && sudo cp watch2scan.sh /etc/init.d/watch2scan```
 11. ```sudo update-rc.d watch2scan defaults```
-12. Add to ~/.bashrc
+12. Add to ~/.bashrc and watch2scan
     ```
     export hostname=XXX
     export auth_token=XXX

@@ -108,9 +108,11 @@ cleanup() {
         rm -f /tmp/s2p_* ||
         echo upload failed, retaining file /tmp/s2p_${identifier}.${typeExtension}pdf >&2
     else
-      echo something went wrong, archiving images
-      mkdir /tmp/$$
-      mv /tmp/s2p_*.png ~/$$/
+      if compgen -G "/tmp/s2p_*.png" >/dev/null; then
+        echo something went wrong, archiving images
+        mkdir ~/$$
+        mv /tmp/s2p_*.png ~/$$/
+      fi
     fi
   else
     echo retaining images for prepending to next document
