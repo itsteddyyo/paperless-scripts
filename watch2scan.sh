@@ -9,14 +9,15 @@
 # Description:       watch /tmp/companion dir and when a file is created with the name of a paperless type it start the scan2paperless script parameterized
 ### END INIT INFO
 mkdir /tmp/companion
+chown companion:companion /tmp/companion
 inotifywait -q -m -e create /tmp/companion | while read DIRECTORY EVENT FILE; do
 if [[ ${FILE} = "auto" ]]; then
-    scan2paperless
+    runuser admin -s /bin/bash -c "scan2paperless"
   else 
     if [[ ${FILE} = "retain" ]]; then
-      scan2paperless --retain
+      runuser admin -s /bin/bash -c "scan2paperless --retain"
     else
-      scan2paperless --type=$FILE
+      runuser admin -s /bin/bash -c "scan2paperless --type=${FILE}"
     fi
   fi
 done

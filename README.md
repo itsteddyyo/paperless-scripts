@@ -6,7 +6,7 @@
 3. ```curl https://raw.githubusercontent.com/bitfocus/companion-pi/main/install.sh | bash```
 4. ```sudo apt install libsane1 jq libqpdf-dev```
 5. ```python3 -m pip install --upgrade pip```
-6. ```pip3 install --no-deps img2pdf```
+6. ```sudo su && pip install --no-deps --system img2pdf```
 7. ```sudo ln /usr/share/color/icc/colord/sRGB.icc /usr/share/color/icc/sRGB.icc```
 8. ```git clone https://github.com/itsteddyyo/paperless-scripts.git```
 9. ```cd paperless-scripts```
