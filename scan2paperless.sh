@@ -117,7 +117,7 @@ cleanup() {
       echo starting upload
       post2paperless /tmp/s2p_${identifier}.${typeExtension}pdf
       code=$?
-      if [[ code -eq 0]]; then
+      if [[ code -eq 0 ]]; then
         echo upload successfull, deleting pdf
         #can be deleted if everything is save
         cp /tmp/s2p_${identifier}.${typeExtension}pdf ~/success || true
@@ -126,6 +126,7 @@ cleanup() {
         echo upload failed, retaining file ~/$$/s2p_${identifier}.${typeExtension}pdf
         mkdir ~/$$
         mv /tmp/s2p_${identifier}.${typeExtension}pdf ~/$$/ || true
+      fi
     else
       if compgen -G "/tmp/s2p_*.png" >/dev/null; then
         echo image creation failed, retaining files ~/$$/s2p_*.pdf
