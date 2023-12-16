@@ -98,9 +98,9 @@ cleanup() {
     if [[ code -eq 0 || code -eq 5 ]]; then
       echo creating pdf
       if compgen -G "/tmp/s2p_retain_*.png" >/dev/null; then
-        img2pdf --pdfa /tmp/s2p_retain_*.png /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
+        img2pdf --pdfa --output "/tmp/s2p_${identifier}.${typeExtension}pdf" "/tmp/s2p_retain_*.png" "/tmp/s2p_${identifier}_*.png"
       else
-        img2pdf --pdfa /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
+        img2pdf --pdfa --output "/tmp/s2p_${identifier}.${typeExtension}pdf" "/tmp/s2p_${identifier}_*.png"
       fi
       code=$?
       if [[ code -eq 0 ]]; then
