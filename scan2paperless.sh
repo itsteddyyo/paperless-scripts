@@ -102,7 +102,8 @@ cleanup() {
       else
         img2pdf --pdfa /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
       fi
-      if [[ $? -eq 0]]; then
+      code=$?
+      if [[ code -eq 0 ]]; then
         echo pdf creation successfull, deleting images
         rm -f /tmp/s2p_${identifier}_*.png || true
         rm -f /tmp/s2p_retain_*.png || true
@@ -115,7 +116,8 @@ cleanup() {
 
       echo starting upload
       post2paperless /tmp/s2p_${identifier}.${typeExtension}pdf
-      if [[ $? -eq 0]]; then
+      code=$?
+      if [[ code -eq 0]]; then
         echo upload successfull, deleting pdf
         #can be deleted if everything is save
         cp /tmp/s2p_${identifier}.${typeExtension}pdf ~/success || true
