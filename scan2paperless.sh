@@ -3,11 +3,11 @@
 hostname=$hostname
 auth_token=$auth_token
 
-retval=$(curl --retry 99 --retry-all-errors --http1.1 -f -X GET -H "Authorization: Token $auth_token" -sS https://$hostname/api/document_types/ || exit 1)
-jqAvailableTypes=$(jq ".results|map(.slug)" <<<${retval})
-jqAvailableIds=$(jq ".results|map(.id)" <<<${retval})
-availableTypes=($(echo $jqAvailableTypes | sed -e 's/\[ //g' -e 's/\ ]//g' -e 's/\,//g'))
-availableIds=($(echo $jqAvailableIds | sed -e 's/\[ //g' -e 's/\ ]//g' -e 's/\,//g'))
+retval=$(curl --retry 99 --retry-all-errors --http1.1 -f -X GET -H "Authorization: Token $auth_token" -sS "https://$hostname/api/document_types/" || exit 1)
+jqAvailableTypes=$(jq ".results|map(.slug)" <<<"${retval}")
+jqAvailableIds=$(jq ".results|map(.id)" <<<"${retval}")
+availableTypes=($(echo "$jqAvailableTypes" | sed -e 's/\[ //g' -e 's/\ ]//g' -e 's/\,//g'))
+availableIds=($(echo "$jqAvailableIds" | sed -e 's/\[ //g' -e 's/\ ]//g' -e 's/\,//g'))
 
 # More safety, by turning some bugs into errors.
 # Without `errexit` you don’t need ! and can replace
@@ -18,7 +18,7 @@ set -o errexit -o pipefail -o noclobber -o nounset
 # -use return value from ${PIPESTATUS[0]}, because ! hosed $?
 ! getopt --test >/dev/null
 if [[ ${PIPESTATUS[0]} -ne 4 ]]; then
-  echo 'I’m sorry, `getopt --test` failed in this environment.'
+  echo "I’m sorry, 'getopt --test' failed in this environment."
   exit 1
 fi
 
