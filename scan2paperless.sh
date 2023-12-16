@@ -98,11 +98,10 @@ cleanup() {
     if [[ code -eq 0 || code -eq 5 ]]; then
       echo creating pdf
       if compgen -G "/tmp/s2p_retain_*.png" >/dev/null; then
-        img2pdf --pdfa --output "/tmp/s2p_${identifier}.${typeExtension}pdf" "/tmp/s2p_retain_*.png" "/tmp/s2p_${identifier}_*.png"
+        img2pdf --pdfa --output "/tmp/s2p_${identifier}.${typeExtension}pdf" "/tmp/s2p_retain_*.png" "/tmp/s2p_${identifier}_*.png" || code=$?
       else
-        img2pdf --pdfa --output "/tmp/s2p_${identifier}.${typeExtension}pdf" "/tmp/s2p_${identifier}_*.png"
+        img2pdf --pdfa --output "/tmp/s2p_${identifier}.${typeExtension}pdf" "/tmp/s2p_${identifier}_*.png" || code=$?
       fi
-      code=$?
       if [[ code -eq 0 ]]; then
         echo pdf creation successfull, deleting images
         rm -f /tmp/s2p_${identifier}_*.png || true
@@ -115,8 +114,7 @@ cleanup() {
       fi
 
       echo starting upload
-      post2paperless /tmp/s2p_${identifier}.${typeExtension}pdf
-      code=$?
+      post2paperless /tmp/s2p_${identifier}.${typeExtension}pdf || code=$?
       if [[ code -eq 0 ]]; then
         echo upload successfull, deleting pdf
         #can be deleted if everything is save
