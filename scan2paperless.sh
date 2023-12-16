@@ -98,20 +98,38 @@ cleanup() {
     if [[ code -eq 0 || code -eq 5 ]]; then
       echo creating pdf
       if compgen -G "/tmp/s2p_retain_*.png" >/dev/null; then
-        img2pdf --pdfa --rotation=180 /tmp/s2p_retain_*.png /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
+        img2pdf --pdfa /tmp/s2p_retain_*.png /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
       else
-        img2pdf --pdfa --rotation=180 /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
+        img2pdf --pdfa /tmp/s2p_${identifier}_*.png --output /tmp/s2p_${identifier}.${typeExtension}pdf
+      fi
+      if [[ $? -eq 0]]; then
+        echo pdf creation successfull, deleting images
+        rm -f /tmp/s2p_${identifier}_*.png || true
+        rm -f /tmp/s2p_retain_*.png || true
+      else
+        echo pdf creation failed, retaining files ~/$$/s2p_*.png
+        mkdir ~/$$
+        mv /tmp/s2p_${identifier}_*.png ~/$$/ || true
+        mv /tmp/s2p_retain_*.png ~/$$/ || true
       fi
 
       echo starting upload
-      post2paperless /tmp/s2p_${identifier}.${typeExtension}pdf &&
-        rm -f /tmp/s2p_* ||
-        echo upload failed, retaining file /tmp/s2p_${identifier}.${typeExtension}pdf >&2
+      post2paperless /tmp/s2p_${identifier}.${typeExtension}pdf
+      if [[ $? -eq 0]]; then
+        echo upload successfull, deleting pdf
+        #can be deleted if everything is save
+        cp /tmp/s2p_${identifier}.${typeExtension}pdf ~/success || true
+        rm -f /tmp/s2p_${identifier}.${typeExtension}pdf || true
+      else
+        echo upload failed, retaining file ~/$$/s2p_${identifier}.${typeExtension}pdf
+        mkdir ~/$$
+        mv /tmp/s2p_${identifier}.${typeExtension}pdf ~/$$/ || true
     else
       if compgen -G "/tmp/s2p_*.png" >/dev/null; then
-        echo something went wrong, archiving images
+        echo image creation failed, retaining files ~/$$/s2p_*.pdf
         mkdir ~/$$
-        mv /tmp/s2p_*.png ~/$$/
+        mv /tmp/s2p_${identifier}_*.png ~/$$/ || true
+        mv /tmp/s2p_retain_*.png ~/$$/ || true
       fi
     fi
   else
