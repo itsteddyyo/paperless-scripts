@@ -140,4 +140,4 @@ cleanup() {
 
 trap 'cleanup; exit 1' EXIT
 
-scanimage --format=png --resolution 600 --batch="/tmp/s2p_${identifier}_%d.png" --mode=Lineart --swdeskew=yes --swskip=${emptyThreshold} --batch-start=10 --source="ADF ${mode})" -x 210 -y 297
+scanimage --format=png --resolution 600 --batch="/tmp/s2p_${identifier}_%d.png" --mode=Lineart --swdeskew=yes --swskip=${emptyThreshold} --batch-start=10 --source="ADF ${mode}"  --page-width=210 --page-height=297
